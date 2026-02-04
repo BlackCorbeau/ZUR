@@ -1,0 +1,23 @@
+name: PDF Generator
+
+on: push
+
+permissions:
+  contents: write
+
+jobs:
+  create-pdf:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          
+      - run: sudo apt update && sudo apt install -y texlive-latex-base texlive-lang-cyrillic texlive-latex-extra
+      
+      - run: pdflatex -interaction=nonstopmode main.tex && pdflatex -interaction=nonstopmode main.tex
+      
+      - run: |
+          git add main.pdf
+          git -c user.name="PDF Bot" -c user.email="bot@pdf" commit -m "PDF" || true
+          git push
